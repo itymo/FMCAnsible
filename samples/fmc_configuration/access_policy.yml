@@ -17,9 +17,9 @@
       cisco.fmcansible.fmc_configuration:
         operation: upsertAccessPolicy
         data:
-          name: NGFW-Access-Policy28
+          name: NGFW-Access-Policy25
           defaultAction:
-            action: BLOCK
+            action: PERMIT
             intrusionPolicy:
               id: "{{ policies[0].id }}"
               type: "{{ policies[0].type }}"

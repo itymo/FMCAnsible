@@ -8,7 +8,7 @@
 
     - name: Create a TCP port for PostgreSQL
       cisco.fmcansible.fmc_configuration:
-        operation: createMultipleProtocolPortObject
+        operation: upsertProtocolPortObject
         data:
           name: PostgreSQLporte
           port: "5432"
@@ -78,3 +78,14 @@
           type: protocolportobject
         path_params:
           domainUUID: '{{ domain[0].uuid }}'
+
+    # - name: Create an object for ICMP Time Exceeded type
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: upsertICMPV4Object
+    #     data:
+    #       name: ICMPTimeExceeded
+    #       icmpType: TIME_EXCEEDED
+    #       code: 1
+    #       type: icmpv4object
+    #     path_params:
+    #       domainUUID: '{{ domain[0].uuid }}'

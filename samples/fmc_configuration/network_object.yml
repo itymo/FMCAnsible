@@ -6,9 +6,34 @@
         operation: getAllDomain
         register_as: domain
 
+    # - name: Create an FQDN network for Cisco DevNet
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: upsertFQDNObject
+    #     data:
+    #       name: CiscoDevNetNetwork
+    #       value: developer.cisco.com
+    #       dnsResolution: IPV4_AND_IPV6
+    #       type: FQDN
+    #     path_params:
+    #       domainUUID: '{{ domain[0].uuid }}'
+
+    # - name: Create an FQDN network for Cisco FTD
+    #   cisco.fmcansible.fmc_configuration:
+    #     #operation: upsertFQDNObject
+    #     operation: createMultipleFQDNObject
+    #     data:
+    #       name: CiscoFtdNetwork41
+    #       value: ftd.cisco.com
+    #       type: FQDN
+    #       dnsResolution: IPV4_AND_IPV6
+    #     path_params:
+    #       domainUUID: '{{ domain[0].uuid }}'
+
     - name: Create a network object for Cisco FTD 1
       cisco.fmcansible.fmc_configuration:
         operation: upsertNetworkObject
+        #operation: createMultipleNetworkObject
+        #operation: updateNetworkObject
         data:
           name: net-15
           value: 10.10.30.0/24
@@ -19,6 +44,8 @@
     - name: Create a network object for Cisco FTD 2
       cisco.fmcansible.fmc_configuration:
         operation: upsertNetworkObject
+        #operation: createMultipleNetworkObject
+        #operation: updateNetworkObject
         data:
           name: net-13
           value: 10.10.40.0/24
@@ -28,7 +55,9 @@
 
     - name: Create a Cisco network group
       cisco.fmcansible.fmc_configuration:
-        operation: upsertNetworkGroup
+        #operation: upsertNetworkGroup
+        #operation: createMultipleNetworkGroup
+        operation: updateNetworkGroup
         data:
           name: netg-1
           type: networkgroup
@@ -39,3 +68,52 @@
               type: '{{ Network_net_13.type }}'
         path_params:
           domainUUID: '{{ domain[0].uuid }}'
+          objectId: '02EBAC31-2E98-0ed3-0000-231928236527'
+
+    # - name: Update the FQDN network for Cisco FTD
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: updateFQDNObject
+    #     path_params:
+    #       objectId: '{{ FQDN_ciscoftdnetwork41.id }}'
+    #       domainUUID: '{{ domain[0].uuid }}'
+    #     data:
+    #       id: '{{ FQDN_ciscoftdnetwork41.id }}'
+    #       name: CiscoFtdNetwork
+    #       description: Updated 
+    #       value: dev.cisco.com
+    #       dnsResolution: IPV4_AND_IPV6
+    #       type: FQDN
+
+    # - name: Update the Cisco network group by removing FTD network
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: updateNetworkGroup
+    #     path_params:
+    #       objectId: '{{ networkgroup_cisconetworkgroup.id }}'
+    #       domainUUID: '{{ domain[0].uuid }}'
+    #     data:
+    #       id: '{{ networkgroup_cisconetworkgroup.id }}'
+    #       name: CiscoNetworkGroup
+    #       type: networkgroup
+    #       objects:
+    #         - '{{ fqdnobject_ciscodevnetnetwork }}'
+
+    # - name: Delete the Cisco network group
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: deleteNetworkObjectGroup
+    #     path_params:
+    #       objectId: '{{ networkobjectgroup_cisconetworkgroup.id }}'
+    #       domainUUID: '{{ domain[0].uuid }}'
+
+    # - name: Delete the FQDN network for Cisco DevNet
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: deleteFQDNObject
+    #     path_params:
+    #       objectId: '{{ fqdnobject_ciscodevnetnetwork.id }}'
+    #       domainUUID: '{{ domain[0].uuid }}'
+
+    # - name: Delete the FQDN network for Cisco FTD
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: deleteFQDNObject
+    #     path_params:
+    #       objectId: '{{ fqdnobject_ciscoftdnetwork.id }}'
+    #       domainUUID: '{{ domain[0].uuid }}'

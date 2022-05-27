@@ -8,38 +8,27 @@
 
     - name: Create Prefilter Policy
       cisco.fmcansible.fmc_configuration:
-        operation: createPrefilterPolicy
+        operation: upsertPrefilterPolicy
         data:
-          name: NGFW-Prefilter-Policy104
+          name: NGFW-Prefilter-Policy7
           defaultAction:
-            action: ANALYZE_TUNNELS
+            action: BLOCK_TUNNELS
             type: PrefilterPolicyDefaultAction
           type: PrefilterPolicy
-          description: testing upsert
         path_params:
           domainUUID: '{{ domain[0].uuid }}'
-        register_as: prefilter
 
-    - name: Update Prefilter Policy
+    - name: Create Prefilter Policy
       cisco.fmcansible.fmc_configuration:
         operation: updatePrefilterPolicy
         data:
-          name: NGFW-Prefilter-Policy104
+          name: NGFW-Prefilter-Policy7
           defaultAction:
-            action: ANALYZE_TUNNELS
+            action: BLOCK_TUNNELS
             type: PrefilterPolicyDefaultAction
-            id: '{{ prefilter.defaultAction.id }}'
           type: PrefilterPolicy
-          description: testing upsert new
         path_params:
           domainUUID: '{{ domain[0].uuid }}'
-          objectId: '{{ prefilter.id }}'
-
-    - name: Delete Prefilter Policy
-      cisco.fmcansible.fmc_configuration:
-        operation: deletePrefilterPolicy
-        path_params:
-          domainUUID: '{{ domain[0].uuid }}'
-          objectId: '{{ prefilter.id }}'
+          objectId: '{{ PrefilterPolicy_ngfw_prefilter_policy7.id }}'
 
     

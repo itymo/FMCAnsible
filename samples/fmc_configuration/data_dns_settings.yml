@@ -1,6 +1,10 @@
 - hosts: all
   connection: httpapi
   tasks:
+    - name: Get Domain
+      cisco.fmcansible.fmc_configuration:
+        operation: getAllDomain
+        register_as: domain
     - name: Create custom DNS object
       cisco.fmcansible.fmc_configuration:
         operation: upsertDNSServerGroupObject

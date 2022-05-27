@@ -1,0 +1,74 @@
+- hosts: all
+  connection: httpapi
+  tasks:
+    - name: Get Domain
+      cisco.fmcansible.fmc_configuration:
+        operation: getAllDomain
+        register_as: domain
+    
+    - name: Get Device
+      cisco.fmcansible.fmc_configuration:
+        operation: getAllDevice
+        path_params:
+          domainUUID: '{{ domain[0].uuid }}'
+        query_params:
+          expanded: true
+        register_as: all_device_list
+
+    - name: Get Device license
+      set_fact:
+        lic: '{{ all_device_list[0].license_caps }}'
+        lic2:
+          - 'MALWARE'
+    
+    - name: set device license
+      set_fact:
+        lic3: '{{ lic + lic2 }}'
+
+    - name: remove duplicates
+      set_fact:
+        lic: '{{ lic3 | unique | list }}'
+
+    - name: Enable Malware License
+      cisco.fmcansible.fmc_configuration:
+        operation: updateDevice
+        data:
+          hostName: '{{ all_device_list[0].hostName }}'
+          license_caps: '{{ lic }}'
+          regKey: 'cisco'
+          type: Device
+          name: '{{ all_device_list[0].name }}'
+          id: '{{ all_device_list[0].id }}'
+        path_params:
+          domainUUID: '{{ domain[0].uuid }}'
+          objectId: '{{ all_device_list[0].id }}'
+
+    - name: Find an intrustion policy
+      cisco.fmcansible.fmc_configuration:
+        operation: getAllIntrusionPolicy
+        register_as: intrusion_policies
+
+    - name: Find a file policy
+      cisco.fmcansible.fmc_configuration:
+        operation: getAllFilePolicy
+        register_as: file_policies
+
+    - name: Get Access Policy
+      cisco.fmcansible.fmc_configuration:
+        operation: getAllAccessPolicy
+        query_params:
+          name: 'FTD-1'
+        register_as: accesspolicy
+
+    - name: Create an Access Rule with intrusion and file policies
+      cisco.fmcansible.fmc_configuration:
+        operation: createMultipleAccessRule
+        data:
+          action: ALLOW
+          ipsPolicy: '{{ intrusion_policies[0] }}'
+          filePolicy: '{{ file_policies[0] }}'
+          name: RULE-IPS
+          type: AccessRule
+        path_params:
+          containerUUID: '{{ accesspolicy.id }}'
+          domainUUID: '{{ domain[0].uuid }}'

@@ -15,26 +15,28 @@
           type: networkobject
         path_params:
           domainUUID: '{{ domain[0].uuid }}'
+        register_as: network_object4
 
     - name: Setup the second destination network for static route
       cisco.fmcansible.fmc_configuration:
         operation: upsertNetworkObject
         data:
           name: PrivateNetwork5
-          value: 192.168.6.0/24
+          value: 192.168.5.0/24
           type: networkobject
         path_params:
           domainUUID: '{{ domain[0].uuid }}'
-
+        register_as: network_object5
     - name: Setup gateway network for static route
       cisco.fmcansible.fmc_configuration:
         operation: upsertHostObject
         data:
           name: Router2
           value: 192.168.2.1
-          type: host
+          type: "Host"
         path_params:
           domainUUID: '{{ domain[0].uuid }}'
+        register_as: router
       
     - name: Get Devices
       cisco.fmcansible.fmc_configuration:
@@ -49,21 +51,17 @@
         path_params:
           containerUUID: '{{ device_list[0].id }}'
           domainUUID: '{{ domain[0].uuid }}'
-        query_params:
-          expanded: true
         register_as: interface_list
 
     - name: Setup static route
       cisco.fmcansible.fmc_configuration:
         operation: upsertIPv4StaticRouteModel
         data:
-          interfaceName: "{{ interface_list[0].ifname }}"
+          interfaceName: "{{ interface_list[1].name }}"
           selectedNetworks:
-            - id: "{{ Network_privatenetwork4.id }}"
-            - id: "{{ Network_privatenetwork5.id }}"
-          gateway: 
-            object:
-              id: "{{ Host_router2.id }}"
+            - "{{ network_object4 }}"
+            - "{{ network_object5 }}"
+          gateway: "{{ router }}"
           name: "test_static_route"
           metricValue: 1
           type: IPv4StaticRoute

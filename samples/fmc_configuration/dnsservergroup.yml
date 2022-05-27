@@ -18,9 +18,9 @@
         path_params:
           domainUUID: '{{ domain[0].uuid }}'
 
-    - name: Delete FQDN network for Cisco DevNet
-      cisco.fmcansible.fmc_configuration:
-        operation: deleteDNSServerGroupObject
-        path_params:
-          domainUUID: '{{ domain[0].uuid }}'
-          objectId: '{{ DNSServerGroupObject_dnsgroup2.id }}'
+    # - name: Delete FQDN network for Cisco DevNet
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: deleteDNSServerGroupObject
+    #     path_params:
+    #       domainUUID: '{{ domain[0].uuid }}'
+    #       objectId: '{{ DNSServerGroupObject_dnsgroup2.id }}'

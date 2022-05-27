@@ -15,13 +15,13 @@
           url: www.cisco.com
           type: urlobject
         path_params:
-          domainUUID: '{{ domain[0].id }}'
+          domainUUID: '{{ domain[0].uuid }}'
 
     - name: Get Devices
       cisco.fmcansible.fmc_configuration:
         operation: getAllDevice
         path_params:
-          domainUUID: '{{ domain[0].id }}' 
+          domainUUID: '{{ domain[0].uuid }}' 
         register_as: device_list 
 
     - name: Find a Security Intelligence URL Policy
@@ -29,7 +29,7 @@
         operation: getAllAccessPolicySecurityIntelligencePolicy
         path_params:
           containerUUID: '{{ device_list[0].id }}'
-          domainUUID: '{{ domain[0].id }}'
+          domainUUID: '{{ domain[0].uuid }}'
         register_as: policies
 
     - name: Add Cisco as whitelisted URL to SecurityIntelligenceURLPolicy

@@ -1,0 +1,20 @@
+- hosts: all
+  connection: httpapi
+  tasks:
+    - name: Get Domain
+      cisco.fmcansible.fmc_configuration:
+        operation: getAllDomain
+        register_as: domain
+
+    - name: upsertNetworkObject should create a new network
+      cisco.fmcansible.fmc_configuration:
+        operation: upsertNetworkObject
+        path_params:
+          domainUUID: '{{ getAllDomain[0].uuid }}'        
+        data:
+          name: "ansible-test-network"
+          description: "Upserted network object"
+          value: "192.23.23.0/24"
+          type: "networkobject"
+        register_as: "upsertedTestObj"
+      register: result

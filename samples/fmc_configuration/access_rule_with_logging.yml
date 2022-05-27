@@ -21,6 +21,20 @@
         path_params:
           domainUUID: '{{ domain[0].uuid }}'
 
+    # - name: Setup a syslog server
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: upsertSyslogServer
+    #     data:
+    #       name: 10.0.4.5:514
+    #       useManagementInterface: True
+    #       protocol: UDP
+    #       host: 10.0.4.5
+    #       port: "514"
+    #       type: syslogserver
+    #     filters:
+    #       host: 10.0.4.5
+    #     register_as: syslog_server
+
     - name: Create an access rule logging malware files
       cisco.fmcansible.fmc_configuration:
         operation: upsertAccessRule
@@ -29,9 +43,10 @@
           action: ALLOW
           logEnd: True
           logBegin: False
-          sendEventsToFMC: True
+          sendEventsToFMC : True
           filePolicy: "{{ file_policies[0] }}"
           type: AccessRule
         path_params:
           containerUUID: '{{ accesspolicy[0].id }}'
           domainUUID: '{{ domain[0].uuid }}'
+          objectId: '02EBAC31-2E98-0ed3-0000-000268460035'

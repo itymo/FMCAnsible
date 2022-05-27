@@ -6,6 +6,21 @@
         operation: getAllDomain
         register_as: domain
 
+    # - name: Get Devices
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: getAllDevice
+    #     path_params:
+    #       domainUUID: '{{ domain[0].uuid }}' 
+    #     register_as: device_list
+
+    # - name: Get Device Interfaces
+    #   cisco.fmcansible.fmc_configuration:
+    #     operation: getAllFTDPhysicalInterface
+    #     path_params:
+    #       containerUUID: '{{ device_list[0].id }}'
+    #       domainUUID: '{{ domain[0].uuid }}'
+    #     register_as: interface_list
+
     - name: Get Sec Zone
       cisco.fmcansible.fmc_configuration:
         operation: getAllSecurityZoneObject
@@ -24,9 +39,11 @@
 
     - name: Create NAT Policy
       cisco.fmcansible.fmc_configuration:
+        #operation: createFTDNatPolicy
+        #operation: updateFTDNatPolicy
         operation: upsertFTDNatPolicy
         data:
-          name: Test-NAT-Policys3
+          name: Test-NAT-Policys
           type: FTDNatPolicy
         path_params:
           domainUUID: '{{ domain[0].uuid }}'
@@ -35,9 +52,12 @@
     - name: Setup an inside-outsite NAT rule
       cisco.fmcansible.fmc_configuration:
         operation: upsertFTDManualNatRule
+        #operation: createMultipleFTDManualNatRule
+        #operation: updateFTDManualNatRule
         data:
+          #name: InsideOutsideNatRule
           natType: STATIC
-          destinationInterface: "{{ zones[2] }}"
+          destinationInterface: "{{ zones[0] }}"
           sourceInterface: "{{ zones[1] }}"
           originalSource: "{{ network_results[0] }}"
           interfaceInTranslatedSource: True
@@ -47,12 +67,3 @@
         path_params:
           containerUUID: '{{ NAT.id }}'
           domainUUID: '{{ domain[0].uuid }}'
-        register_as: nat1
-
-    - name: Delete an inside-outsite NAT rule
-      cisco.fmcansible.fmc_configuration:
-        operation: deleteFTDManualNatRule
-        path_params:
-          containerUUID: '{{ NAT.id }}'
-          domainUUID: '{{ domain[0].uuid }}'
-          objectId: '{{ nat1.id }}'
